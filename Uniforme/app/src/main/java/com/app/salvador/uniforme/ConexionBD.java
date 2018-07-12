@@ -1,6 +1,10 @@
 package com.app.salvador.uniforme;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Debug;
 import android.os.StrictMode;
@@ -21,6 +25,7 @@ import java.sql.Statement;
 public class ConexionBD extends AppCompatActivity {
 
     SharedPreferences preferences;
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +37,10 @@ public class ConexionBD extends AppCompatActivity {
         final TextInputEditText txtUsuario = (TextInputEditText)  findViewById(R.id.txtUsuario);
         final TextInputEditText txtContrasena = (TextInputEditText)  findViewById(R.id.txtContrasena );
         FloatingActionButton fabGuardar= (FloatingActionButton)findViewById(R.id.fabGuardar);
+        FloatingActionButton fabVolver= (FloatingActionButton)findViewById(R.id.fabVolver);
+        fabVolver.setVisibility(getIntent().getIntExtra(("volver"),0));
+
+        //fabVolver.setVisibility(if(getIntent().getBooleanExtra("volver"),false)? 0 : 4);
         fabGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -42,22 +51,22 @@ public class ConexionBD extends AppCompatActivity {
                         .putString("BDcontrasena", txtContrasena.getText().toString() )
                         .commit();
                 Conexion c =new Conexion();
-                Toast.makeText(getApplicationContext(),c.Prueba(),Toast.LENGTH_LONG).show();
-/*
-                ip= txtServer.getText().toString();
-                un=txtUsuario.getText().toString();
-                pass=txtContrasena.getText().toString();
-                db= txtBaseDatos.getText().toString();
-                BD bd = new BD();
-                bd.execute("");
-                */
-                finish();
+                if (c.getErrorHubo())
+                {
+                    Toast.makeText(getApplicationContext(),c.getErrorMensaje(),Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    setResult(1);
+                    finish();
+                }
 
             }
 
         });
 
     }
+    /*
     Connection conn;
     String un,pass,db,ip;
     class BD extends AsyncTask<String,String,String> {
@@ -68,7 +77,7 @@ public class ConexionBD extends AppCompatActivity {
             Debug.waitForDebugger();
 
             conn=connectionclass(un,pass,db,ip);
-var="ConnectionClass simon";
+            var="ConnectionClass simon";
                 try {
                     Statement st = null;
                     if (conn != null) {
@@ -90,22 +99,5 @@ var="ConnectionClass simon";
         }
 
     }
-
-    public Connection connectionclass(String user,String password,String database,String server){
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        Connection connection = null;
-        String ConnectionURL=null;
-        try {
-            Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            ConnectionURL="jdbc:jtds:sqlserver://"+server+";databaseName="+database + ";user="+user+";password="+password +";";
-            connection = DriverManager.getConnection(ConnectionURL);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return connection ;
-
-    }
+    */
 }

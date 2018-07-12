@@ -20,8 +20,9 @@ import android.widget.Toast;
 
 public class Principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    static final int RESULTADO=1;
     static SharedPreferences preferences ;
+    public Integer pantalla=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,12 +48,23 @@ public class Principal extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        startActivity(new Intent(getBaseContext(),ConexionBD.class ));
-        TextView tv = (TextView) findViewById(R.id.textoejemplo ) ;
-        tv.setText(tv.getText() + preferences.getString("BDservidor","Vacio")+"/n");
-        tv.setText(tv.getText() +preferences.getString("BDusuario","Vacio")+"/n");
-        tv.setText(tv.getText() +preferences.getString("BDcontrasena","Vacio")+"/n");
-        tv.setText(tv.getText() +preferences.getString("BDnombre","Vacio")+"/n");
+        if (preferences.getString("BDservidor","Vacio").equals( "Vacio"))
+        {
+            pantalla=1;
+            startActivityForResult(new Intent(getBaseContext(),ConexionBD.class ).putExtra("volver",4),RESULTADO);
+        }
+        else
+        {
+            TextView tv = (TextView) findViewById(R.id.textoejemplo ) ;
+            tv.setText( preferences.getString("BDservidor","Vacio")+"\n");
+            tv.setText(tv.getText() +preferences.getString("BDnombre","Vacio")+"\n");
+            tv.setText(tv.getText() +preferences.getString("BDusuario","Vacio")+"\n");
+            tv.setText(tv.getText() +preferences.getString("BDcontrasena","Vacio")+"\n");
+        }
+
+
+
+
     }
 
     @Override
@@ -110,5 +122,23 @@ public class Principal extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        switch (pantalla)
+        {
+            case 1:
+                if (requestCode == RESULTADO) {
+                    // Make sure the request was successful
+                    TextView tv = (TextView) findViewById(R.id.textoejemplo ) ;
+                    tv.setText( preferences.getString("BDservidor","Vacio")+"\n");
+                    tv.setText(tv.getText() +preferences.getString("BDnombre","Vacio")+"\n");
+                    tv.setText(tv.getText() +preferences.getString("BDusuario","Vacio")+"\n");
+                    tv.setText(tv.getText() +preferences.getString("BDcontrasena","Vacio")+"\n");
+                }
+                break;
+        }
+
     }
 }

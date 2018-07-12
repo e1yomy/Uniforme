@@ -74,6 +74,7 @@ class Conexion{
                     ";user="+Principal.preferences.getString("BDusuario","")+
                     ";password="+Principal.preferences.getString("BDcontrasena","") +";";
             conexion = DriverManager.getConnection(ConnectionURL);
+            setErrorHubo(false);
         } catch (ClassNotFoundException e) {
             setErrorExcepcion(e);
             setErrorHubo(true);
@@ -90,7 +91,7 @@ class Conexion{
             e.printStackTrace();
         }
     }
-    public ResultSet EjecutarQuery(String sql )
+    public ResultSet EjecutarQuerySelect(String sql )
     {
         setErrorHubo(false);
         ResultSet rs = null;
