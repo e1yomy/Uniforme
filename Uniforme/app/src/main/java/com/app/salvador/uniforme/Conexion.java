@@ -68,11 +68,13 @@ class Conexion{
         StrictMode.setThreadPolicy(policy);
         String ConnectionURL=null;
         try {
+
             Class.forName("net.sourceforge.jtds.jdbc.Driver");
-            ConnectionURL="jdbc:jtds:sqlserver://"+Principal.preferences.getString("BDservidor","")+
-                    ";databaseName="+Principal.preferences.getString("BDnombre","") +
-                    ";user="+Principal.preferences.getString("BDusuario","")+
-                    ";password="+Principal.preferences.getString("BDcontrasena","") +";";
+            DriverManager.setLoginTimeout(10);
+            ConnectionURL="jdbc:jtds:sqlserver://"+(Principal.preferences.getString("BDservidor",""))+
+                    ";databaseName="+(Principal.preferences.getString("BDnombre","")) +
+                    ";user="+(Principal.preferences.getString("BDusuario",""))+
+                    ";password="+(Principal.preferences.getString("BDcontrasena","")) +";";
             conexion = DriverManager.getConnection(ConnectionURL);
             setErrorHubo(false);
         } catch (ClassNotFoundException e) {
