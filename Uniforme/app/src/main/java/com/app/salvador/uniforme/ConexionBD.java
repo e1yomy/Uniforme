@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.sql.Connection;
@@ -29,6 +30,9 @@ public class ConexionBD extends AppCompatActivity {
     SharedPreferences preferences;
     static ConexionBD cdb;
     ProgressBar progressBar;
+    ScrollView scrollView;
+    TextInputEditText txtServer,txtBaseDatos,txtUsuario,txtContrasena;
+
     @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +42,12 @@ public class ConexionBD extends AppCompatActivity {
         cdb=ConexionBD.this;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-         preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        final TextInputEditText txtServer = (TextInputEditText)  findViewById(R.id.txtServer);
-        final TextInputEditText txtBaseDatos = (TextInputEditText)  findViewById(R.id.txtBaseDatos);
-        final TextInputEditText txtUsuario = (TextInputEditText)  findViewById(R.id.txtUsuario);
-        final TextInputEditText txtContrasena = (TextInputEditText)  findViewById(R.id.txtContrasena );
+        preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        txtServer = (TextInputEditText)  findViewById(R.id.txtServer);
+        txtBaseDatos = (TextInputEditText)  findViewById(R.id.txtBaseDatos);
+        txtUsuario = (TextInputEditText)  findViewById(R.id.txtUsuario);
+        txtContrasena = (TextInputEditText)  findViewById(R.id.txtContrasena );
+        scrollView = (ScrollView)findViewById(R.id.scrollView);
         FloatingActionButton fabGuardar= (FloatingActionButton)findViewById(R.id.fabGuardar);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.INVISIBLE);
@@ -82,9 +87,16 @@ public class ConexionBD extends AppCompatActivity {
     class ConsutaConexion extends AsyncTask<String,String,String> {
         @Override
         protected String doInBackground(String... strings) {
-            Conexion c = new Conexion();
+            final Conexion c = new Conexion();
             if (c.getErrorHubo()) {
-                //Toast.makeText(getApplicationContext(), c.getErrorMensaje(), Toast.LENGTH_LONG).show();
+                cdb.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Toast.makeText(getApplicationContext(),c.getErrorMensaje(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),"No se ha podido conectar al Servidor",Toast.LENGTH_LONG).show();
+                    }
+                });
+
             } else {
                 setResult(1);
                 finish();
@@ -95,10 +107,18 @@ public class ConexionBD extends AppCompatActivity {
         protected void onPreExecute ()
         {
             progressBar.setVisibility(View.VISIBLE);
+            txtServer.setEnabled(false);
+            txtBaseDatos.setEnabled(false);
+            txtUsuario.setEnabled(false);
+            txtContrasena.setEnabled(false);
         }
         @Override
         protected void onPostExecute(String result) {
             progressBar.setVisibility(View.INVISIBLE);
+            txtServer.setEnabled(true);
+            txtBaseDatos.setEnabled(true);
+            txtUsuario.setEnabled(true);
+            txtContrasena.setEnabled(true);
         }
 
     }
